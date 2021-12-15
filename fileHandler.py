@@ -5,12 +5,14 @@ from tkinter import filedialog
 
 class handler:
     def __init__(self, master):
+        super().__init__()
         self.apps = []
         
         canvas = tk.Canvas(master, height=700, width=700, bg="orange")
         canvas.pack()
         
-        myFrame = tk.Frame(master,  height=50, width=600)
+        myFrame = tk.Frame(master, height=50, width=600, bg= "grey")
+        testLab = tk.Label(myFrame, text="this is a test").pack()
         myFrame.pack()
         
         
@@ -31,12 +33,7 @@ class handler:
         print("this is filename: " +str(fname))
         print("this is y:" + y)
         
-        myFrame = tk.Frame(master,  height=50, width=600)
-        myFrame.pack()
-        
-        label = tk.Label(self.myFrame, text=y, bg="gray").pack()
-        
-        
+        label = tk.Label(myFrame, text="fdsfdssdf").pack()
         
         
         
