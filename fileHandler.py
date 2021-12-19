@@ -5,42 +5,38 @@ from tkinter import filedialog
 
 class handler:
     def __init__(self, master):
-        super().__init__()
+        #super().__init__()
         self.apps = []
         
-        canvas = tk.Canvas(master, height=700, width=700, bg="orange")
-        canvas.pack()
         
-        myFrame = tk.Frame(master, height=50, width=600, bg= "grey")
-        testLab = tk.Label(myFrame, text="this is a test").pack()
-        myFrame.pack()
+        self.canvas = tk.Canvas(master, height=700, width=700, bg="white")
+        self.canvas.create_text(100, 50, text="Current Apps:", fill="black", font=('Constantia 15 bold'))   
+        self.canvas.pack()
         
+        self.frame = tk.Frame(self.canvas, bg="white")
+        self.frame.place(x=0,y=80,relheight=0.8,relwidth=1)
         
-        self.myButton2 = tk.Button(master, text="Add an app!", command= self.addApp)
-        self.myButton2.pack(pady=20)
+        self.addAppButton = tk.Button(master, text="Add an app!", command= self.addApp)
+        self.addAppButton.pack(pady=5)
         
-        
-        
-        self.myButton3 = tk.Button(master, text="show apps", command=self.showApps)
-        self.myButton3.pack(pady=20)
-        
+        self.openAppsButton = tk.Button(master, text="Open apps", command = self.openApps)
+        self.openAppsButton.pack(pady=5)
+           
     def addApp(self):
-        filename = filedialog.askopenfilename(initialdir="/", title="Select File", filetypes=(("executables", "*.exe"), ("all files", "*.*")))
-        self.apps.append(filename)
-        self.addAppToFrame(self, filename)
+        filename = filedialog.askopenfilename(initialdir="/", title="Select File", filetypes=(("all files", "*.*"),("executables", "*.exe")))
+
+        self.apps.append(filename)        
+        self.addToCanvas(filename)
     
-    def addAppToFrame(self, fname, y):
-        print("this is filename: " +str(fname))
-        print("this is y:" + y)
+    def addToCanvas(self, fileName):
+        self.label = tk.Label(self.frame, text=fileName, bg='white').pack()
         
-        label = tk.Label(myFrame, text="fdsfdssdf").pack()
+    def openApps(self):
+        for path in self.apps:
+            os.startfile(path)
+            
         
-        
-        
-    def showApps(self):
-        print(self.apps)
-        
-    
+
     
     
         

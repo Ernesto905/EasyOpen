@@ -1,2 +1,2 @@
 # EasyOpen
-Python Tkinter app. Open collection of programs simultaneously
+Python Tkinter app which opens a collection of windows programs simultaneously.
