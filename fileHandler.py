@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 from tkinter import filedialog, StringVar
 from jsonStore import addToJson, returnAllCollections
+from sqliteStore import addNewCollection
 
 
 class handler:
@@ -48,7 +49,8 @@ class handler:
     
     def newCollection(self):
         self.createCollection = tk.Toplevel(self.master)     
-        self.app = newCollection(self.createCollection, self.apps)        
+        self.app = newCollection(self.createCollection, self.apps)      
+        
         
 class newCollection():
     def __init__(self, master, apps):
@@ -76,7 +78,8 @@ class newCollection():
         
     def storeCollection(self):
         collectionName = self.enterCollection.get()
-        addToJson(collectionName, self.apps)
+        #addToJson(collectionName, self.apps)
+        addNewCollection(collectionName, self.apps)
         self.master.destroy()
         
     

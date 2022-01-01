@@ -14,21 +14,21 @@ def main():
     root.mainloop()
     
 def initializeDatabase():
-    
     c.execute("""CREATE TABLE IF NOT EXISTS Collections(
-                collectionID INTEGER PRIMARY KEY ASC,
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
                 name TEXT
     )""")
     
     c.execute("""CREATE TABLE IF NOT EXISTS Apps(
-                appID INTEGER PRIMARY KEY ASC,
+                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
                 app_path TEXT
     )""")
     
     c.execute("""CREATE TABLE IF NOT EXISTS Adjuncts(
-                CID INTEGER REFERENCES Collections(collectionID),
-                AID INTEGER REFERENCES Apps(appID)
-    )""")
+                collection_id INTEGER,
+                app_id INTEGER,
+                PRIMARY KEY(collection_id, app_id)    
+    )""")   
 
 if __name__ == '__main__':
     main()
