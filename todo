@@ -1,5 +1,4 @@
 RECREATE USING sqlite "easyopen.db" DATABASE 
->create Collections, adjunct, and apps table.
 >Show collections on main frame 
 
 TO BE INCLUDED AFTER JSON TO SQL IS COMPLETED FOR ABOVE FUNCTIONALITY^

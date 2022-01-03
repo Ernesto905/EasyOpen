@@ -1,5 +1,6 @@
-from fileHandler import *
-from sqliteStore import *
+from fileHandler import handler
+import tkinter as tk
+from sqliteStore import c
 
 def main():
     #create databse
@@ -16,18 +17,18 @@ def main():
 def initializeDatabase():
     c.execute("""CREATE TABLE IF NOT EXISTS Collections(
                 id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                name TEXT
+                name TEXT UNIQUE
     )""")
     
     c.execute("""CREATE TABLE IF NOT EXISTS Apps(
                 id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                app_path TEXT
+                app_path TEXT UNIQUE
     )""")
     
     c.execute("""CREATE TABLE IF NOT EXISTS Adjuncts(
                 collection_id INTEGER,
                 app_id INTEGER,
-                PRIMARY KEY(collection_id, app_id)    
+                PRIMARY KEY(collection_id, app_id) 
     )""")   
 
 if __name__ == '__main__':

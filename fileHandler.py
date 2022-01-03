@@ -1,13 +1,11 @@
 import os 
 import tkinter as tk
 from tkinter import filedialog, StringVar
-from jsonStore import addToJson, returnAllCollections
-from sqliteStore import addNewCollection
+from sqliteStore import addNewCollection, returnAll, returnApps
 
 
 class handler:
     def __init__(self, master):
-        #super().__init__()
         self.apps = []
         self.master = master
         self.var = StringVar()
@@ -25,20 +23,15 @@ class handler:
         self.newCollectionButton = tk.Button(self.frame, text="Create a collection", command = self.newCollection)
         self.newCollectionButton.pack(pady=5)
         
-        #This button prints the current apps to the terminal (FOR TESTING PURPOSES)
+        #Prints the current apps to the terminal (FOR TESTING PURPOSES)
         self.testButton = tk.Button(self.frame, text="Test", command = self.check)
         self.testButton.pack(pady=5)
         
+
+        #to be implemented: will list constantly updating list of collections and their apps on the canvas 
+        """
         self.update()
         
-    def check(self):
-        print(self.apps)
-        
-    def openApps(self):
-        for path in self.apps:
-            os.startfile(path)  
-    
-    
     def update(self):  
         data = returnAllCollections()
         format = ''
@@ -46,10 +39,24 @@ class handler:
             format += f"Collection: {collectionName}\nApps:"         
         if format != '': self.var.set(format)
         self.master.after(1000, self.update)
+        """
+    
+    def check(self):
+        print(returnAll())
+        
+    def openApps(self):
+        for path in self.apps:
+            os.startfile(path)  
+    
     
     def newCollection(self):
+        self.apps = []
         self.createCollection = tk.Toplevel(self.master)     
-        self.app = newCollection(self.createCollection, self.apps)      
+        self.app = newCollection(self.createCollection, self.apps)    
+        
+
+
+      
         
         
 class newCollection():
@@ -78,7 +85,6 @@ class newCollection():
         
     def storeCollection(self):
         collectionName = self.enterCollection.get()
-        #addToJson(collectionName, self.apps)
         addNewCollection(collectionName, self.apps)
         self.master.destroy()
         
