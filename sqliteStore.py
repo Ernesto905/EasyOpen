@@ -1,4 +1,5 @@
 import sqlite3
+from typing import Collection
 conn = sqlite3.connect('easyOpen.db')
 c = conn.cursor()
 
@@ -26,7 +27,8 @@ def returnApps(collectionName):
         ON Apps.id = Adjuncts.app_id
     INNER JOIN Collections
         ON Collections.id = Adjuncts.collection_id
-    WHERE Collections.name = ? """, (collectionName, ))
+    WHERE Collections.name = ? 
+    """, (collectionName, ))
     return c.fetchall()
 
 
@@ -41,3 +43,28 @@ def returnAll():
         ON Collections.id = Adjuncts.collection_id
     """)
     return c.fetchall()
+
+#Return all the paths associated with a collection
+def returnPaths(collectionName):
+    c.execute("""
+    SELECT Collections.name, Apps.app_path
+    FROM Apps
+    INNER JOIN Adjuncts
+        ON Apps.id = Adjuncts.app_id
+    INNER JOIN Collections
+        ON Collections.id = Adjuncts.collection_id
+    WHERE Collections.name = ?  
+    """, (collectionName,))
+    return c.fetchall()
+
+
+#return a list of all collections
+def returnAllCollections():
+
+    conn.row_factory = lambda cursor, row: row[0] #when accessing single sqlite columns, will return values as list of strings rather than tuples
+    c = conn.cursor()
+    
+    c.execute("SELECT ALL name FROM Collections")
+    allCollections = c.fetchall()
+    
+    return allCollections

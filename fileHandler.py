@@ -1,14 +1,15 @@
 import os 
 import tkinter as tk
 from tkinter import filedialog, StringVar
-from sqliteStore import addNewCollection, returnAll, returnApps
+from sqliteStore import addNewCollection, returnAll, returnApps, returnAllCollections
 
 
 class handler:
     def __init__(self, master):
         self.apps = []
+        self.testList = []
         self.master = master
-        self.var = StringVar()
+        self.collVar = StringVar()
         
         self.canvas = tk.Canvas(self.master, height=700, width=700, bg="white")
         self.canvas.create_text(100, 50, text="Current Collections:", fill="black", font=('Constantia 15 bold'))   
@@ -17,8 +18,8 @@ class handler:
         self.frame = tk.Frame(self.canvas, bg="white")
         self.frame.place(x=0,y=80,relheight=0.8,relwidth=1)
         
-        self.label = tk.Label(self.frame, textvariable=self.var, bg='white')
-        self.label.pack()
+        self.label = tk.Label(self.frame, textvariable=self.collVar, bg='white')
+        self.label.pack(pady=20)
         
         self.newCollectionButton = tk.Button(self.frame, text="Create a collection", command = self.newCollection)
         self.newCollectionButton.pack(pady=5)
@@ -26,23 +27,37 @@ class handler:
         #Prints the current apps to the terminal (FOR TESTING PURPOSES)
         self.testButton = tk.Button(self.frame, text="Test", command = self.check)
         self.testButton.pack(pady=5)
-        
 
-        #to be implemented: will list constantly updating list of collections and their apps on the canvas 
-        """
+        #list constantly updating list of collections and their apps on the canvas 
         self.update()
+    #Every time a new collection is created, adds a button to the frame with the collection as the name
+    """
+        self.updateButtons()
+    def updateButtons(self):
+        data = returnAllCollections()
+        if len(data) != 0:
+            for collectionName in data:
+                replace_spaces = collectionName.replace(" ", "_")
+                exec(f"self.collection_{replace_spaces} = tk.Button(self.frame, text = {collectionName}, command = get_apps({collectionName})).pack(pady=5)")
+        self.master.after(1000, self.updateButtons)
+    """
+    
+    def get_apps(self, collectionName):
+        print(returnApps(collectionName))
+
         
     def update(self):  
         data = returnAllCollections()
         format = ''
         for collectionName in data:
-            format += f"Collection: {collectionName}\nApps:"         
-        if format != '': self.var.set(format)
+            format += f"{collectionName}\n"         
+        
+        if format != '': self.collVar.set(format)
         self.master.after(1000, self.update)
-        """
+        
     
     def check(self):
-        print(returnAll())
+        print(self.testList)
         
     def openApps(self):
         for path in self.apps:
@@ -54,10 +69,8 @@ class handler:
         self.createCollection = tk.Toplevel(self.master)     
         self.app = newCollection(self.createCollection, self.apps)    
         
+  
 
-
-      
-        
         
 class newCollection():
     def __init__(self, master, apps):
