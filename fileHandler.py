@@ -1,10 +1,10 @@
 import os 
 import tkinter as tk
 from tkinter import filedialog, StringVar
-from sqliteStore import addNewCollection, returnAll, returnApps, returnAllCollections
+from sqliteStore import addNewCollection, delete_a_collection, returnAll, returnApps, returnAllCollections
 
 
-class handler:
+class MainWindow:
     def __init__(self, master):
         self.apps = []
         self.testList = []
@@ -21,31 +21,20 @@ class handler:
         self.label = tk.Label(self.frame, textvariable=self.collVar, bg='white')
         self.label.pack(pady=20)
         
-        self.newCollectionButton = tk.Button(self.frame, text="Create a collection", command = self.newCollection)
+        self.newCollectionButton = tk.Button(self.frame, text="Create/add to a collection", command = self.new_collection)
         self.newCollectionButton.pack(pady=5)
-        
-        #Prints the current apps to the terminal (FOR TESTING PURPOSES)
-        self.testButton = tk.Button(self.frame, text="Test", command = self.check)
-        self.testButton.pack(pady=5)
+
+        self.newCollectionButton = tk.Button(self.frame, text="Delete a collection", command = self.delete_collection)
+        self.newCollectionButton.pack(pady=5)
 
         #list constantly updating list of collections and their apps on the canvas 
         self.update()
-    #Every time a new collection is created, adds a button to the frame with the collection as the name
-    """
-        self.updateButtons()
-    def updateButtons(self):
-        data = returnAllCollections()
-        if len(data) != 0:
-            for collectionName in data:
-                replace_spaces = collectionName.replace(" ", "_")
-                exec(f"self.collection_{replace_spaces} = tk.Button(self.frame, text = {collectionName}, command = get_apps({collectionName})).pack(pady=5)")
-        self.master.after(1000, self.updateButtons)
-    """
     
+    
+    #To be implemented later; will return all the apps in a collection in list format
     def get_apps(self, collectionName):
         print(returnApps(collectionName))
-
-        
+    
     def update(self):  
         data = returnAllCollections()
         format = ''
@@ -55,24 +44,44 @@ class handler:
         if format != '': self.collVar.set(format)
         self.master.after(1000, self.update)
         
-    
-    def check(self):
-        print(self.testList)
-        
     def openApps(self):
         for path in self.apps:
             os.startfile(path)  
     
     
-    def newCollection(self):
+    def new_collection(self):
         self.apps = []
         self.createCollection = tk.Toplevel(self.master)     
-        self.app = newCollection(self.createCollection, self.apps)    
+        self.app = NewCollection(self.createCollection, self.apps)    
         
-  
+    def delete_collection(self):
+        self.eraseCollection = tk.Toplevel(self.master)
+        self.app = DeleteCollection(self.eraseCollection)
 
+class DeleteCollection:
+    def __init__(self, master):
+        self.master = master
         
-class newCollection():
+        self.frame = tk.Frame(self.master, height=200, width=200, bg="Black")        
+        self.frame.pack()
+        
+        self.label = tk.Label(self.frame, text="Please input the name of the collection you'd like to delete")
+        self.label.pack()
+        
+        self.enterCollection = tk.Entry(self.frame)
+        self.enterCollection.pack()
+        
+        self.saveAndExit = tk.Button(self.frame, text="Save and exit", command= self.deleteCollection)
+        self.saveAndExit.pack(pady=5)
+        
+        
+        
+    def deleteCollection(self):
+        collectionName = self.enterCollection.get()
+        delete_a_collection(collectionName)
+        self.master.destroy()
+        
+class NewCollection:
     def __init__(self, master, apps):
         self.master = master
         self.apps = apps
@@ -80,7 +89,7 @@ class newCollection():
         self.frame = tk.Frame(self.master, height=200, width=200, bg="Black")        
         self.frame.pack()
         
-        self.label = tk.Label(self.frame, text="Please input the name of the New collection")
+        self.label = tk.Label(self.frame, text="Please input the name of the new collection\n or collection you'd like to add to")
         self.label.pack()
         
         self.enterCollection = tk.Entry(self.frame)

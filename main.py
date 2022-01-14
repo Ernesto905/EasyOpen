@@ -1,4 +1,4 @@
-from fileHandler import handler
+from fileHandler import MainWindow
 import tkinter as tk
 from sqliteStore import c
 
@@ -11,26 +11,43 @@ def main():
     root.title("Easy Open")
     
     #Run main window
-    mainCall = handler(root)
+    mainCall = MainWindow(root)
     root.mainloop()
     
 def initializeDatabase():
+
+    c.execute("PRAGMA foreign_keys = ON")
     c.execute("""CREATE TABLE IF NOT EXISTS Collections(
-                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+                id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
                 name TEXT UNIQUE
     )""")
     
     c.execute("""CREATE TABLE IF NOT EXISTS Apps(
-                id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
-                app_path TEXT UNIQUE
+                id INTEGER PRIMARY KEY AUTOINCREMENT UNIQUE,
+                path TEXT UNIQUE
     )""")
     
-    c.execute("""CREATE TABLE IF NOT EXISTS Adjuncts(
-                collection_id INTEGER,
-                app_id INTEGER,
+    c.execute("""CREATE TABLE IF NOT EXISTS CollectionToApps(
+                collection_id INT,
+                app_id INT,
                 PRIMARY KEY(collection_id, app_id) 
+                FOREIGN KEY(collection_id) REFERENCES Collections(id)
+                    ON DELETE CASCADE ON UPDATE CASCADE,
+                FOREIGN KEY(app_id) REFERENCES Apps(id)
+                    ON DELETE CASCADE ON UPDATE CASCADE
     )""")   
 
+    c.execute("""CREATE TRIGGER IF NOT EXISTS delete_unused_tags
+                AFTER DELETE ON Collections
+                BEGIN
+                    DELETE 
+                    FROM Apps 
+                    WHERE NOT EXISTS ( SELECT NULL
+                                    FROM CollectionToApps
+                                    WHERE Apps.id = CollectionToApps.app_id);
+                END;
+    """
+    )
 if __name__ == '__main__':
     main()
 

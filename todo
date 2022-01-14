@@ -1,7 +1,3 @@
-RECREATE USING sqlite "easyopen.db" DATABASE 
->Show collections on main frame 
-
-TO BE INCLUDED AFTER JSON TO SQL IS COMPLETED FOR ABOVE FUNCTIONALITY^
 >collection deletion functionality 
 >add to existing collection functionality
 >delete from existing collection functionality

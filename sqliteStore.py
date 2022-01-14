@@ -11,22 +11,23 @@ def addNewCollection(collectionName, apps):
     collectionId = c.fetchone()[0]
 
     for app in apps:
-        c.execute("INSERT OR IGNORE INTO Apps(app_path) VALUES(?)", [app])
-        c.execute("SELECT id FROM Apps WHERE app_path = ?", (app,))
+        c.execute("INSERT OR IGNORE INTO Apps(path) VALUES(?)", [app])
+        c.execute("SELECT id FROM Apps WHERE path = ?", (app,))
         appId = c.fetchone()[0]
-        c.execute("INSERT OR REPLACE INTO Adjuncts(collection_id, app_id) VALUES(?, ?)", (collectionId, appId))
+
+        c.execute("INSERT OR REPLACE INTO CollectionToApps(collection_id, app_id) VALUES(?, ?)", (collectionId, appId))
 
     conn.commit()
 
 #Returns all the paths associated with a collection name
 def returnApps(collectionName):
     c.execute("""
-    SELECT Apps.app_path
+    SELECT Apps.path
     FROM Apps
-    INNER JOIN Adjuncts
-        ON Apps.id = Adjuncts.app_id
+    INNER JOIN CollectionToApps
+        ON Apps.id = CollectionToApps.app_id
     INNER JOIN Collections
-        ON Collections.id = Adjuncts.collection_id
+        ON Collections.id = CollectionToApps.collection_id
     WHERE Collections.name = ? 
     """, (collectionName, ))
     return c.fetchall()
@@ -35,24 +36,24 @@ def returnApps(collectionName):
 #Returns all Collections as well as the paths associated with them 
 def returnAll():
     c.execute("""
-    SELECT Collections.name, Apps.app_path
+    SELECT Collections.name, Apps.path
     FROM Apps
-    INNER JOIN Adjuncts
-        ON Apps.id = Adjuncts.app_id
+    INNER JOIN CollectionToApps
+        ON Apps.id = CollectionToApps.app_id
     INNER JOIN Collections
-        ON Collections.id = Adjuncts.collection_id
+        ON Collections.id = CollectionToApps.collection_id
     """)
     return c.fetchall()
 
 #Return all the paths associated with a collection
 def returnPaths(collectionName):
     c.execute("""
-    SELECT Collections.name, Apps.app_path
+    SELECT Collections.name, Apps.path
     FROM Apps
-    INNER JOIN Adjuncts
-        ON Apps.id = Adjuncts.app_id
+    INNER JOIN CollectionToApps
+        ON Apps.id = CollectionToApps.app_id
     INNER JOIN Collections
-        ON Collections.id = Adjuncts.collection_id
+        ON Collections.id = CollectionToApps.collection_id
     WHERE Collections.name = ?  
     """, (collectionName,))
     return c.fetchall()
@@ -68,3 +69,8 @@ def returnAllCollections():
     allCollections = c.fetchall()
     
     return allCollections
+
+def delete_a_collection(collectionName):
+    c.execute("DELETE FROM Collections WHERE name = ?", (collectionName,))
+    conn.commit()
+
